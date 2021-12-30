@@ -9,14 +9,14 @@
 <AnchorPane id="AnchorPane" prefHeight="242.0" prefWidth="342.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controlador.Vista_GuardarController">
    <children>
       <Label layoutX="20.0" layoutY="28.0" text="Número de identidad:" />
-      <TextField fx:id="textFieldID" layoutX="158.0" layoutY="24.0" prefHeight="25.0" prefWidth="166.0" />
+      <TextField fx:id="textFieldID" layoutX="149.0" layoutY="24.0" prefHeight="25.0" prefWidth="175.0" promptText="Teclee el número de identidad" />
       <Label layoutX="20.0" layoutY="65.0" text="Nombre:" />
       <Label layoutX="20.0" layoutY="102.0" text="Apellidos:" />
       <Label layoutX="20.0" layoutY="142.0" text="Fecha de nacimiento:" />
-      <TextField fx:id="textFieldNombre" layoutX="158.0" layoutY="61.0" prefHeight="25.0" prefWidth="166.0" />
-      <TextField fx:id="textFieldApellidos" layoutX="158.0" layoutY="98.0" prefHeight="25.0" prefWidth="166.0" />
-      <DatePicker fx:id="datePickerFecha" layoutX="158.0" layoutY="138.0" prefHeight="25.0" prefWidth="166.0" />
-      <Button fx:id="botonGuardar" layoutX="158.0" layoutY="197.0" mnemonicParsing="false" onAction="#guardar" prefHeight="25.0" prefWidth="80.0" text="Guardar" />
-      <Button fx:id="botonCancelar" layoutX="248.0" layoutY="197.0" mnemonicParsing="false" onAction="#cancelar" prefHeight="25.0" prefWidth="80.0" text="Cancelar" />
+      <TextField fx:id="textFieldNombre" layoutX="149.0" layoutY="61.0" prefHeight="25.0" prefWidth="175.0" promptText="Teclee el nombre" />
+      <TextField fx:id="textFieldApellidos" layoutX="149.0" layoutY="98.0" prefHeight="25.0" prefWidth="175.0" promptText="Teclee el apellido" />
+      <DatePicker fx:id="datePickerFecha" layoutX="149.0" layoutY="138.0" prefHeight="25.0" prefWidth="175.0" promptText="Seleccione la fecha" />
+      <Button fx:id="botonGuardar" layoutX="149.0" layoutY="197.0" mnemonicParsing="false" onAction="#guardar" prefHeight="25.0" prefWidth="80.0" text="Guardar" />
+      <Button fx:id="botonCancelar" layoutX="244.0" layoutY="197.0" mnemonicParsing="false" onAction="#cancelar" prefHeight="25.0" prefWidth="80.0" text="Cancelar" />
    </children>
 </AnchorPane>

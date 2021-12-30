@@ -75,6 +75,7 @@ String nombre = textFieldNombre.getText();
 String apellidos = textFieldApellidos.getText();
 LocalDate fechaNacimiento = datePickerFecha.getValue();
 
+if(numeroID !="" && nombre !="" && apellidos !="" && fechaNacimiento != null){
 Persona nuevaPersona;
 nuevaPersona = new Persona(numeroID, nombre, apellidos, fechaNacimiento);
 
@@ -117,6 +118,15 @@ else{
             alert.showAndWait();
 }
 }
+else{
+  Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setHeaderText(null);
+            alert.setTitle("Error");
+            alert.setContentText("Debe rellenar todos los campos de texto");
+            alert.showAndWait();
+}
+}
+
 @FXML
 private void cancelar(ActionEvent cancelar){
         this.persona = null;
