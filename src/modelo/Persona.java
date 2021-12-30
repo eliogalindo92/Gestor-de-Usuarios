@@ -4,6 +4,7 @@
  */
 package modelo;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Objects;
 
@@ -11,7 +12,9 @@ import java.util.Objects;
  *
  * @author Elio Galindo
  */
-public class Persona {
+public class Persona implements Serializable{
+
+private static final long serialVersionUID = 1L;
 private String numeroID;
 private String nombre;
 private String apellidos;

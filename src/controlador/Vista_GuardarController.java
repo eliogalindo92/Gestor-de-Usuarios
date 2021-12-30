@@ -75,7 +75,7 @@ String nombre = textFieldNombre.getText();
 String apellidos = textFieldApellidos.getText();
 LocalDate fechaNacimiento = datePickerFecha.getValue();
 
-if(numeroID !="" && nombre !="" && apellidos !="" && fechaNacimiento != null){
+if(!numeroID.isEmpty() && !nombre.isEmpty() && !apellidos.isEmpty() && fechaNacimiento != null){
 Persona nuevaPersona;
 nuevaPersona = new Persona(numeroID, nombre, apellidos, fechaNacimiento);
 
@@ -97,14 +97,14 @@ if(!personas.contains(nuevaPersona)){
          }
          
          //Guardando
-   //      else{
+         else{
                this.persona = nuevaPersona;
                Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setHeaderText(null);
                 alert.setTitle("Información");
                 alert.setContentText("Se ha guardado correctamente");
                 alert.showAndWait();
-    //           }
+                }
           //Cerrando ventana
          Stage stage = (Stage)this.botonGuardar.getScene().getWindow();
          stage.close();

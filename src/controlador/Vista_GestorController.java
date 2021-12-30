@@ -7,6 +7,8 @@ package controlador;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -25,6 +27,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import modelo.Persona;
+import modelo.Gestor;
 
 /**
  * FXML Controller class
@@ -55,15 +58,22 @@ private TableColumn columnaApellidos;
 @FXML
 private TableColumn columnaFecha;
 
-private ObservableList<Persona> personas;
-private ObservableList<Persona> buscarPersonas;
+//private ObservableList<Persona> personas;
+//private ObservableList<Persona> buscarPersonas;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
-        personas = FXCollections.observableArrayList();
-        buscarPersonas = FXCollections.observableArrayList();
-        this.tablaPersonas.setItems(personas);
+        try { 
+         Gestor.getGestor().cargarFichero();
+       }
+        catch(IOException e){
+        e.printStackTrace();
+        }       
+        catch (ClassNotFoundException ex) {
+        Logger.getLogger(Vista_GestorController.class.getName()).log(Level.SEVERE, null, ex);
+    }
+        this.tablaPersonas.setItems(Gestor.getGestor().getPersonas());
         this.columnaID.setCellValueFactory(new PropertyValueFactory("numeroID"));
         this.columnaNombre.setCellValueFactory(new PropertyValueFactory("nombre"));
         this.columnaApellidos.setCellValueFactory(new PropertyValueFactory("apellidos"));
@@ -82,7 +92,7 @@ private ObservableList<Persona> buscarPersonas;
 
             // Cojo el guardarController
             Vista_GuardarController controlador = loader.getController();
-            controlador.inicializarAtributos(personas);
+            controlador.inicializarAtributos(Gestor.getGestor().getPersonas());
 
             // Creo el Scene
             Scene scene = new Scene(root);
@@ -95,11 +105,12 @@ private ObservableList<Persona> buscarPersonas;
             // cojo la persona devuelta
             Persona nuevaPersona = controlador.getPersona();
             if (nuevaPersona != null) {
-                personas.add(nuevaPersona);
+                Gestor.getGestor().getPersonas().add(nuevaPersona);
+                Gestor.getGestor().guardarFichero();
                 if (nuevaPersona.getNombre().toLowerCase().contains(this.textFieldBuscar.getText().toLowerCase()) || 
                     nuevaPersona.getApellidos().toLowerCase().contains(this.textFieldBuscar.getText().toLowerCase()) ||
                     nuevaPersona.getNumeroID().contains(this.textFieldBuscar.getText())) {
-                    this.buscarPersonas.add(nuevaPersona);
+                    Gestor.getGestor().getBuscarPersonas().add(nuevaPersona);
                 }
                 this.tablaPersonas.refresh();
             }
@@ -126,27 +137,28 @@ private void modificar(ActionEvent modificar){
             alert.setTitle("Error");
             alert.setContentText("Debes seleccionar una persona");
             alert.showAndWait();
-        } else {
+        } 
+        else {
 
             try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/vista/Vista_Guardar.fxml"));
+                   FXMLLoader loader = new FXMLLoader(getClass().getResource("/vista/Vista_Guardar.fxml"));
 
-                Parent root = loader.load();
+                   Parent root = loader.load();
+                   Vista_GuardarController guardarController = loader.getController();
+                   guardarController.inicializarAtributos(Gestor.getGestor().getPersonas(), modificarPersona);
 
-                Vista_GuardarController guardarController = loader.getController();
-                guardarController.inicializarAtributos(personas, modificarPersona);
+                   Scene scene = new Scene(root);
+                   Stage stage = new Stage();
+                   stage.initModality(Modality.APPLICATION_MODAL);
+                   stage.setScene(scene);
+                   stage.setResizable(false);
+                   stage.showAndWait();
 
-                Scene scene = new Scene(root);
-                Stage stage = new Stage();
-                stage.initModality(Modality.APPLICATION_MODAL);
-                stage.setScene(scene);
-                stage.setResizable(false);
-                stage.showAndWait();
-
-                Persona personaModificada = guardarController.getPersona();
-                if (personaModificada != null) {
-                    if (!personaModificada.getNombre().toLowerCase().contains(this.textFieldBuscar.getText().toLowerCase())) {
-                        this.buscarPersonas.remove(personaModificada);
+                   Persona personaModificada = guardarController.getPersona();
+                   if(personaModificada != null) {
+                       Gestor.getGestor().guardarFichero();
+                       if (!personaModificada.getNombre().toLowerCase().contains(this.textFieldBuscar.getText().toLowerCase())) {
+                            Gestor.getGestor().getBuscarPersonas().remove(personaModificada);
                     }
                     this.tablaPersonas.refresh();
                 }
@@ -162,7 +174,7 @@ private void modificar(ActionEvent modificar){
 }
     @FXML
      private void eliminar(ActionEvent eliminar){
-             Persona personaSeleccionada = this.tablaPersonas.getSelectionModel().getSelectedItem();
+        Persona personaSeleccionada = this.tablaPersonas.getSelectionModel().getSelectedItem();
 
         if (personaSeleccionada == null) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -172,8 +184,14 @@ private void modificar(ActionEvent modificar){
             alert.showAndWait();
         } else {
             // Elimino la persona
-            this.personas.remove(personaSeleccionada);
-            this.buscarPersonas.remove(personaSeleccionada);
+            Gestor.getGestor().getPersonas().remove(personaSeleccionada);
+            try{
+               Gestor.getGestor().guardarFichero();
+               }
+               catch(IOException e){
+              e.printStackTrace();
+               }       
+            Gestor.getGestor().getBuscarPersonas().remove(personaSeleccionada);
             this.tablaPersonas.refresh();
 
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -188,20 +206,20 @@ private void modificar(ActionEvent modificar){
     private void buscar(KeyEvent buscar){
             String busqueda = this.textFieldBuscar.getText();
 
-        if (buscarPersonas.isEmpty()) {
-            this.tablaPersonas.setItems(personas);
+        if (Gestor.getGestor().getBuscarPersonas().isEmpty()) {
+            this.tablaPersonas.setItems(Gestor.getGestor().getPersonas());
         } else {
 
-            this.buscarPersonas.clear();
+            Gestor.getGestor().getBuscarPersonas().clear();
 
-            for (Persona persona : this.personas) {
-                if (persona.getNumeroID().contains(busqueda.toString()) || 
+            for (Persona persona : Gestor.getGestor().getPersonas()) {
+                if (persona.getNumeroID().contains(busqueda) || 
                     persona.getNombre().toLowerCase().contains(busqueda.toLowerCase()) || 
                     persona.getApellidos().toLowerCase().contains(busqueda.toLowerCase())) {
-                    this.buscarPersonas.add(persona);
+                    Gestor.getGestor().getBuscarPersonas().add(persona);
                 }
             }
-            this.tablaPersonas.setItems(buscarPersonas);
+            this.tablaPersonas.setItems(Gestor.getGestor().getBuscarPersonas());
 
         }
     }
